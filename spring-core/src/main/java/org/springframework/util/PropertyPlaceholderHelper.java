@@ -85,11 +85,13 @@ public class PropertyPlaceholderHelper {
 	 */
 	public PropertyPlaceholderHelper(String placeholderPrefix, String placeholderSuffix,
 			@Nullable String valueSeparator, boolean ignoreUnresolvablePlaceholders) {
-
 		Assert.notNull(placeholderPrefix, "'placeholderPrefix' must not be null");
 		Assert.notNull(placeholderSuffix, "'placeholderSuffix' must not be null");
+		// 设置开始符
 		this.placeholderPrefix = placeholderPrefix;
+		// 设置结束符
 		this.placeholderSuffix = placeholderSuffix;
+		// 设置配对符
 		String simplePrefixForSuffix = wellKnownSimplePrefixes.get(this.placeholderSuffix);
 		if (simplePrefixForSuffix != null && this.placeholderPrefix.endsWith(simplePrefixForSuffix)) {
 			this.simplePrefix = simplePrefixForSuffix;
@@ -97,7 +99,9 @@ public class PropertyPlaceholderHelper {
 		else {
 			this.simplePrefix = this.placeholderPrefix;
 		}
+		// 设置分隔符
 		this.valueSeparator = valueSeparator;
+		// 设置是否忽略不可解析标志
 		this.ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
 	}
 
@@ -128,34 +132,42 @@ public class PropertyPlaceholderHelper {
 
 	protected String parseStringValue(
 			String value, PlaceholderResolver placeholderResolver, @Nullable Set<String> visitedPlaceholders) {
-
+		// 开始下标
 		int startIndex = value.indexOf(this.placeholderPrefix);
 		if (startIndex == -1) {
 			return value;
 		}
-
+		// 结果StringBuilder
 		StringBuilder result = new StringBuilder(value);
 		while (startIndex != -1) {
+			// 寻找结束下标
 			int endIndex = findPlaceholderEndIndex(result, startIndex);
 			if (endIndex != -1) {
+				// 截取开始~结束部分 = placeholder
 				String placeholder = result.substring(startIndex + this.placeholderPrefix.length(), endIndex);
 				String originalPlaceholder = placeholder;
 				if (visitedPlaceholders == null) {
 					visitedPlaceholders = new HashSet<>(4);
 				}
+				// placeholder放入visitedPlaceholders,如果已经存在产生循环遍历
 				if (!visitedPlaceholders.add(originalPlaceholder)) {
 					throw new IllegalArgumentException(
 							"Circular placeholder reference '" + originalPlaceholder + "' in property definitions");
 				}
-				// Recursive invocation, parsing placeholders contained in the placeholder key.
+				// 递归执行开始~结束部分,例:${${}}嵌套占位符情况
 				placeholder = parseStringValue(placeholder, placeholderResolver, visitedPlaceholders);
-				// Now obtain the value for the fully resolved key...
+				// 函数式接口 :: getPropertyAsRawString,获取属性
 				String propVal = placeholderResolver.resolvePlaceholder(placeholder);
+				// 获取解析属性 = null,解析分隔符前文本
 				if (propVal == null && this.valueSeparator != null) {
+					// 根据valueSeparator截取
 					int separatorIndex = placeholder.indexOf(this.valueSeparator);
 					if (separatorIndex != -1) {
+						// : 前
 						String actualPlaceholder = placeholder.substring(0, separatorIndex);
+						// : 后 默认值
 						String defaultValue = placeholder.substring(separatorIndex + this.valueSeparator.length());
+						// 解析 :前的值 - null情况取默认值
 						propVal = placeholderResolver.resolvePlaceholder(actualPlaceholder);
 						if (propVal == null) {
 							propVal = defaultValue;
@@ -163,29 +175,32 @@ public class PropertyPlaceholderHelper {
 					}
 				}
 				if (propVal != null) {
-					// Recursive invocation, parsing placeholders contained in the
-					// previously resolved placeholder value.
+					// 递归解析
 					propVal = parseStringValue(propVal, placeholderResolver, visitedPlaceholders);
 					result.replace(startIndex, endIndex + this.placeholderSuffix.length(), propVal);
 					if (logger.isTraceEnabled()) {
 						logger.trace("Resolved placeholder '" + placeholder + "'");
 					}
+					// 重置开始下标
 					startIndex = result.indexOf(this.placeholderPrefix, startIndex + propVal.length());
 				}
 				else if (this.ignoreUnresolvablePlaceholders) {
-					// Proceed with unprocessed value.
+					// 重置开始下标
 					startIndex = result.indexOf(this.placeholderPrefix, endIndex + this.placeholderSuffix.length());
 				}
 				else {
 					throw new IllegalArgumentException("Could not resolve placeholder '" +
 							placeholder + "'" + " in value \"" + value + "\"");
 				}
+				// 移除originalPlaceholder
 				visitedPlaceholders.remove(originalPlaceholder);
 			}
 			else {
+				// 找不到结束下标
 				startIndex = -1;
 			}
 		}
+		// 返回结果
 		return result.toString();
 	}
 

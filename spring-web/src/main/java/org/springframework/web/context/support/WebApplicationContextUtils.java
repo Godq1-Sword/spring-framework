@@ -63,7 +63,7 @@ import org.springframework.web.context.request.WebRequest;
  * @see org.springframework.web.jsf.FacesContextUtils
  * @see org.springframework.web.jsf.el.SpringBeanFacesELResolver
  */
-public abstract class WebApplicationContextUtils {
+public abstract class  WebApplicationContextUtils {
 
 	private static final boolean jsfPresent =
 			ClassUtils.isPresent("javax.faces.context.FacesContext", RequestContextHolder.class.getClassLoader());

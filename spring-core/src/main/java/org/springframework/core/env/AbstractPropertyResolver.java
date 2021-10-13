@@ -144,10 +144,12 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 	public void validateRequiredProperties() {
 		MissingRequiredPropertiesException ex = new MissingRequiredPropertiesException();
 		for (String key : this.requiredProperties) {
+			// 获取属性不为空add
 			if (this.getProperty(key) == null) {
 				ex.addMissingRequiredProperty(key);
 			}
 		}
+		// ex有数据,抛出异常
 		if (!ex.getMissingRequiredProperties().isEmpty()) {
 			throw ex;
 		}
@@ -204,9 +206,11 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 
 	@Override
 	public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
+		// 创建strictHelper
 		if (this.strictHelper == null) {
 			this.strictHelper = createPlaceholderHelper(false);
 		}
+		// 替换占位符
 		return doResolvePlaceholders(text, this.strictHelper);
 	}
 
@@ -255,13 +259,14 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 		}
 		ConversionService conversionServiceToUse = this.conversionService;
 		if (conversionServiceToUse == null) {
-			// Avoid initialization of shared DefaultConversionService if
-			// no standard type conversion is needed in the first place...
+			// 如果不必要不需要转化
 			if (ClassUtils.isAssignableValue(targetType, value)) {
 				return (T) value;
 			}
+			// 实例化conversionServiceToUse
 			conversionServiceToUse = DefaultConversionService.getSharedInstance();
 		}
+		// 转化
 		return conversionServiceToUse.convert(value, targetType);
 	}
 

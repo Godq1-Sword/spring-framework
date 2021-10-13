@@ -24,10 +24,10 @@ import org.springframework.lang.Nullable;
  *
  * @author Chris Beams
  * @author Juergen Hoeller
- * @since 3.1
  * @see PropertySource
  * @see PropertySources
  * @see AbstractEnvironment
+ * @since 3.1
  */
 public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 
@@ -37,6 +37,7 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 
 	/**
 	 * Create a new resolver against the given property sources.
+	 *
 	 * @param propertySources the set of {@link PropertySource} objects to use
 	 */
 	public PropertySourcesPropertyResolver(@Nullable PropertySources propertySources) {
@@ -78,16 +79,21 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 	protected <T> T getProperty(String key, Class<T> targetValueType, boolean resolveNestedPlaceholders) {
 		if (this.propertySources != null) {
 			for (PropertySource<?> propertySource : this.propertySources) {
+				// isTraceEnable => 记录日志
 				if (logger.isTraceEnabled()) {
 					logger.trace("Searching for key '" + key + "' in PropertySource '" +
 							propertySource.getName() + "'");
 				}
+				// 获取value : 策略模式
 				Object value = propertySource.getProperty(key);
 				if (value != null) {
 					if (resolveNestedPlaceholders && value instanceof String) {
+						// value是否需要占位符解析 => resolveRequiredPlaceholders(...) 是:创建普通占位符解析工具 否:nonStrictHelper = null
 						value = resolveNestedPlaceholders((String) value);
 					}
+					// 记录key被找到
 					logKeyFound(key, propertySource, value);
+					// 转化value
 					return convertValueIfNecessary(value, targetValueType);
 				}
 			}
@@ -105,9 +111,10 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 	 * As of 4.3.3, this does not log the value anymore in order to avoid accidental
 	 * logging of sensitive settings. Subclasses may override this method to change
 	 * the log level and/or log message, including the property's value if desired.
-	 * @param key the key found
+	 *
+	 * @param key            the key found
 	 * @param propertySource the {@code PropertySource} that the key has been found in
-	 * @param value the corresponding value
+	 * @param value          the corresponding value
 	 * @since 4.3.1
 	 */
 	protected void logKeyFound(String key, PropertySource<?> propertySource, Object value) {

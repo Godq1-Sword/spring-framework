@@ -187,11 +187,14 @@ public class GenericConversionService implements ConfigurableConversionService {
 			throw new IllegalArgumentException("Source to convert from must be an instance of [" +
 					sourceType + "]; instead it was a [" + source.getClass().getName() + "]");
 		}
+		// 根据两种类型 => 获取GenericConverter
 		GenericConverter converter = getConverter(sourceType, targetType);
 		if (converter != null) {
+			// invokeConverter 转化 : 代理模式
 			Object result = ConversionUtils.invokeConverter(converter, source, sourceType, targetType);
 			return handleResult(sourceType, targetType, result);
 		}
+		// 没找到GenericConverter
 		return handleConverterNotFound(source, sourceType, targetType);
 	}
 
@@ -310,7 +313,6 @@ public class GenericConversionService implements ConfigurableConversionService {
 	@Nullable
 	private Object handleConverterNotFound(
 			@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType) {
-
 		if (source == null) {
 			assertNotPrimitiveTargetType(sourceType, targetType);
 			return null;

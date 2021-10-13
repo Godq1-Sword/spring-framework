@@ -1,0 +1,20 @@
+@startuml
+autonumber
+AbstractXmlApplicationContext -> AbstractXmlApplicationContext: 传入BeanFactory实例化XmlBeanDefinitionReader
+AbstractXmlApplicationContext -> AbstractXmlApplicationContext: 设置BeanDefinitionReader属性(Environment,ResourceLoader,EntityResolver,Validating)
+AbstractXmlApplicationContext -> BeanDefinitionReader: 委托处理(loadBeanDefinitions)
+BeanDefinitionReader -> BeanDefinitionReader: resourceLoader -> loadBeanDefinitions(location(String)) => 路径文件解析为resource对象
+BeanDefinitionReader -> BeanDefinitionReader: resourceLoader -> loadBeanDefinitions(resource) => new EncodedResource(resource)
+BeanDefinitionReader -> BeanDefinitionReader: resourceLoader -> loadBeanDefinitions(encodedResource) => doLoadDocument(inputSource,resource) // 解析document,inputSource = new InputSource(encodedResource.getInputStream())
+BeanDefinitionReader -> DocumentLoader: resourceLoader -> 委托documentLoader解析document返回Document对象
+DocumentLoader -> BeanDefinitionReader: 1.生成DocumentBuilderFactory 2.由DocumentBuilderFactory创建DocumentBuilder 3.DocumentBuilder.parse返回document
+BeanDefinitionReader -> BeanDefinitionDocumentReader: 委托BeanDefinitionDocumentReader解析document
+BeanDefinitionDocumentReader -> BeanDefinitionDocumentReader: 降级BeanDefinitionParserDelegate(1.parent = this.delegate 2.createDelegate(parent)) //为了parse中递归
+BeanDefinitionDocumentReader -> BeanDefinitionDocumentReader: delegate.parse(ele:doc.getEle()文档元素)最终生成BeanDefinitionHolder // <beans>元素需要递归
+BeanDefinitionDocumentReader -> BeanDefinitionReaderUtils: 委托BeanDefinitionReaderUtils工具处理
+BeanDefinitionReaderUtils -> BeanDefinitionRegistry: 委托BeanDefinitionRegistry注册BeanDefinition信息
+BeanDefinitionRegistry -> BeanDefinitionRegistry: beanDefinitionMap存在beanName 1.允许覆盖=>覆盖  2.不允许=>异常
+BeanDefinitionRegistry -> BeanDefinitionRegistry: beanDefinitionMap不存在beanName 1.如果bean已经创建启动 => 同步bean信息 2.beanDefinitionMap.put(beanName, beanDefinition),beanDefinitionNames.add(beanName)
+BeanDefinitionRegistry -> BeanDefinitionRegistry: 1.if(existingDefinition != null || containsSingleton(beanName)) => resetBeanDefinition(beanName)重置beanDefinition数据 2.isConfigurationFrozen() => clearByTypeCache()
+BeanDefinitionDocumentReader -> BeanDefinitionDocumentReader: 恢复parent(parent = this.delegate)
+@enduml

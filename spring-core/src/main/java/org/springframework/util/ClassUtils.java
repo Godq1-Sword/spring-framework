@@ -540,14 +540,17 @@ public abstract class ClassUtils {
 	public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
 		Assert.notNull(lhsType, "Left-hand side type must not be null");
 		Assert.notNull(rhsType, "Right-hand side type must not be null");
+		// 存在继承关系或同一类,lhsType父类,rhsType子类
 		if (lhsType.isAssignableFrom(rhsType)) {
 			return true;
 		}
+		// 基础数据类型
 		if (lhsType.isPrimitive()) {
 			Class<?> resolvedPrimitive = primitiveWrapperTypeMap.get(rhsType);
 			return (lhsType == resolvedPrimitive);
 		}
 		else {
+			// 基本数据类型和对应数组 + void.class
 			Class<?> resolvedWrapper = primitiveTypeToWrapperMap.get(rhsType);
 			return (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper));
 		}
@@ -563,6 +566,8 @@ public abstract class ClassUtils {
 	 */
 	public static boolean isAssignableValue(Class<?> type, @Nullable Object value) {
 		Assert.notNull(type, "Type must not be null");
+		// 1.如果value不为空 = > isAssignable
+		// 2.为空 => 是否 不是基本数据类型
 		return (value != null ? isAssignable(type, value.getClass()) : !type.isPrimitive());
 	}
 
