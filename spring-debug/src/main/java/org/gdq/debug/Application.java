@@ -1,6 +1,7 @@
 package org.gdq.debug;
 
 
+import org.gdq.custom.CustomTag;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -11,7 +12,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Application {
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
-		ExampleBean bean = applicationContext.getBean(ExampleBean.class);
+		CustomTag bean = applicationContext.getBean(CustomTag.class);
 		System.out.println(bean);
 	}
 }

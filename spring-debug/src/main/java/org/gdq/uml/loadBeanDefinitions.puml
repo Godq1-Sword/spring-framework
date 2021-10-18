@@ -7,10 +7,12 @@ BeanDefinitionReader -> BeanDefinitionReader: resourceLoader -> loadBeanDefiniti
 BeanDefinitionReader -> BeanDefinitionReader: resourceLoader -> loadBeanDefinitions(resource) => new EncodedResource(resource)
 BeanDefinitionReader -> BeanDefinitionReader: resourceLoader -> loadBeanDefinitions(encodedResource) => doLoadDocument(inputSource,resource) // 解析document,inputSource = new InputSource(encodedResource.getInputStream())
 BeanDefinitionReader -> DocumentLoader: resourceLoader -> 委托documentLoader解析document返回Document对象
-DocumentLoader -> BeanDefinitionReader: 1.生成DocumentBuilderFactory 2.由DocumentBuilderFactory创建DocumentBuilder 3.DocumentBuilder.parse返回document
+DocumentLoader -> DocumentLoader: 1.生成DocumentBuilderFactory 2.由DocumentBuilderFactory创建DocumentBuilder 3.DocumentBuilder.parse返回document
+DocumentLoader -> BeanDefinitionReader: EntityResolver用于寻找.xsd.dtd文件,PluggableSchemaResolver寻找xsd/schemaMappings(https://xsd : location),BeansDtdResolver寻找dtd bean.dtd
+DocumentLoader -> DocumentLoader: EntityResolver用于寻找.xsd.dtd文件,PluggableSchemaResolver寻找xsd/schemaMappings(https://xsd : location),BeansDtdResolver寻找dtd bean.dtd
 BeanDefinitionReader -> BeanDefinitionDocumentReader: 委托BeanDefinitionDocumentReader解析document
 BeanDefinitionDocumentReader -> BeanDefinitionDocumentReader: 降级BeanDefinitionParserDelegate(1.parent = this.delegate 2.createDelegate(parent)) //为了parse中递归
-BeanDefinitionDocumentReader -> BeanDefinitionDocumentReader: delegate.parse(ele:doc.getEle()文档元素)最终生成BeanDefinitionHolder // <beans>元素需要递归
+BeanDefinitionDocumentReader -> BeanDefinitionDocumentReader: delegate.parse(ele:doc.getEle()文档元素)最终生成BeanDefinitionHolder // <beans>元素需要递归 , customParse => namespaceHandlerResolver => customHandleResoulver
 BeanDefinitionDocumentReader -> BeanDefinitionReaderUtils: 委托BeanDefinitionReaderUtils工具处理
 BeanDefinitionReaderUtils -> BeanDefinitionRegistry: 委托BeanDefinitionRegistry注册BeanDefinition信息
 BeanDefinitionRegistry -> BeanDefinitionRegistry: beanDefinitionMap存在beanName 1.允许覆盖=>覆盖  2.不允许=>异常
