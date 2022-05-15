@@ -912,17 +912,18 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		if (logger.isTraceEnabled()) {
 			logger.trace("Pre-instantiating singletons in " + this);
 		}
-
-		// Iterate over a copy to allow for init methods which in turn register new bean definitions.
-		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+		// beanDefinitionNames
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
-
-		// Trigger initialization of all non-lazy singleton beans...
+		// 触发所有非延迟加载的单例bean实例化 => getBean => doGetBean = createBean = doCreateBean
 		for (String beanName : beanNames) {
+			// 获取逐级父类rootBeanDef,为了后续父类实例化
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
+			// 条件判断1.非抽象 2.单例 3.非延迟加载
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
+				// 是否实现了FactoryBean
 				if (isFactoryBean(beanName)) {
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
+					// factoryBean,自定义factory后续生成的bean不进行getBean流程
 					if (bean instanceof FactoryBean) {
 						FactoryBean<?> factory = (FactoryBean<?>) bean;
 						boolean isEagerInit;
@@ -1339,7 +1340,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							converter.convertIfNecessary(value, type, descriptor.getMethodParameter()));
 				}
 			}
-
+			// 尝试针对descriptor包装对象类型是[数组,stream,collection,map]情况,进行解析
 			Object multipleBeans = resolveMultipleBeans(descriptor, beanName, autowiredBeanNames, typeConverter);
 			if (multipleBeans != null) {
 				return multipleBeans;

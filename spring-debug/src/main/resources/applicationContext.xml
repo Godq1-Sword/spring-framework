@@ -2,11 +2,31 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:custom="http://www.gbolg.org/schema/beans/spring-custom"
-	   xsi:schemaLocation="
-	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	   http://www.gbolg.org/schema/beans/spring-custom http://www.gbolg.org/schema/beans/spring-custom.xsd">
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://www.gbolg.org/schema/beans/spring-custom http://www.gbolg.org/schema/beans/spring-custom.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 	<bean id="exampleBean" class="org.gdq.debug.ExampleBean">
 		<property name="name" value="example"/>
 	</bean>
-	<custom:customTag id="requiredId" name="testName"/>
+
+	<!-- 自动装配 -->
+	<context:component-scan base-package="org.gdq.annotation"/>
+
+<!--	&lt;!&ndash; 自定义标签 &ndash;&gt;-->
+<!--	<custom:customBean id="customBean" name="example"/>-->
+
+<!--	&lt;!&ndash; propertyEditor &ndash;&gt;-->
+<!--	<bean id="propertyEditor" class="org.gdq.editor.CustomBean">-->
+<!--		<property name="customProperty" value="arg0,arg1"/>-->
+<!--	</bean>-->
+<!--	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">-->
+<!--		<property name="propertyEditorRegistrars">-->
+<!--			<list>-->
+<!--				<bean class="org.gdq.editor.CustomPropertyEditorRegistrar"/>-->
+<!--			</list>-->
+<!--		</property>-->
+<!--	</bean>-->
+
+<!--	&lt;!&ndash; beanPostProcess &ndash;&gt;-->
+<!--	<bean id="customBeanFactoryPostProcess" class="org.gdq.custom.CustomBeanFactoryPostProcessor"/>-->
 </beans>

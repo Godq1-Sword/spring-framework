@@ -2,7 +2,7 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
 		targetNamespace="http://www.gbolg.org/schema/beans/spring-custom">
 
-	<element name="customTag">
+	<element name="customBean">
 		<complexType>
 			<attribute name="id" type="string"/>
 			<attribute name="name" type="string"/>

@@ -305,7 +305,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
 		// BeanDefinitionHolder是BeanDefinition封装扩展类[beanName,alias],用它来完成IOC注册
-		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
+ 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
 			// 装饰BeanDefinition
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);

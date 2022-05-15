@@ -4,7 +4,7 @@ package org.gdq.custom;
  * @author gdq
  * @since 2021/10/17
  */
-public class CustomTag {
+public class CustomBean {
 
 	private String id;
 
@@ -24,5 +24,13 @@ public class CustomTag {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "CustomBean{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				'}';
 	}
 }

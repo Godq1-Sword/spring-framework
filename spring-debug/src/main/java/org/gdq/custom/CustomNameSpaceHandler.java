@@ -9,6 +9,6 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 public class CustomNameSpaceHandler extends NamespaceHandlerSupport {
 	@Override
 	public void init() {
-		registerBeanDefinitionParser("customTag", new CustomTagBeanDefinitionParser());
+		registerBeanDefinitionParser("customBean", new CustomTagBeanDefinitionParser());
 	}
 }

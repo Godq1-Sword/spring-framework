@@ -22,6 +22,10 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.Nullable;
 
 /**
+ * spring导入外部配置和核心接口,根据条件判断要导入哪个配置类
+ * 如果该接口的实现类实现了一些Aware接口,那么在调用selectImports方法之前调用上述接口的回调方法
+ * 如果需要在所有的@Configuration处理完再导入,可以实现DeferredImportSelector接口
+ *
  * Interface to be implemented by types that determine which @{@link Configuration}
  * class(es) should be imported based on a given selection criteria, usually one or
  * more annotation attributes.

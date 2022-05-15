@@ -13,7 +13,7 @@ public class CustomTagBeanDefinitionParser extends AbstractSingleBeanDefinitionP
 
 	@Override
 	protected Class<?> getBeanClass(Element element) {
-		return CustomTag.class;
+		return CustomBean.class;
 	}
 
 	@Override
